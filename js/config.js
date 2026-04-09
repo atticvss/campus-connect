@@ -1,0 +1,4 @@
+window.CAMPUS_CONNECT_CONFIG = {
+  supabaseUrl: 'https://xzzbbqzcscknrvcxecgk.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6emJicXpjc2NrbnJ2Y3hlY2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTM4MDYsImV4cCI6MjA5MTMyOTgwNn0.X8f05EAPJNNx0ZYScXLG5mkKNPKjGoPDsnjI7iHJC0k'
+};

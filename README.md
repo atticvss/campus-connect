@@ -2,6 +2,8 @@
 
 A student campus management web application with dashboards, hackathons, teams, profiles, and notifications.
 
+For Supabase full-stack setup (Auth + PostgreSQL + RLS + JS integration), see `SUPABASE_SETUP.md`.
+
 ---
 
 ## 📁 Project Structure

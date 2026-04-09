@@ -87,6 +87,8 @@
   .btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99,102,241,0.3); }
   .btn-next:disabled, .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
   .inline-error { color: var(--danger); font-size: 0.75rem; margin-top: -0.5rem; margin-bottom: 0.8rem; display: none; }
+  .info-banner { display: none; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; border-radius: 10px; padding: 0.8rem 0.9rem; font-size: 0.82rem; line-height: 1.5; margin-bottom: 1rem; }
+  .info-banner.show { display: block; }
   .pass-toggle-link { color: var(--primary); font-size: 0.8rem; cursor: pointer; font-weight: 600; margin-top: -0.5rem; margin-bottom: 0.8rem; display: inline-block; }
   .field.invalid, .field-light.invalid { border-color: var(--danger); background: #fff7f7; }
   .field.valid, .field-light.valid { border-color: var(--success); }
@@ -229,6 +231,12 @@
   .hack-exp-item h4 { font-weight: 700; font-size: 0.95rem; color: var(--gray-900); }
   .hack-exp-item p { font-size: 0.8rem; color: var(--gray-600); margin: 0.3rem 0; }
   .hack-exp-item .date { font-size: 0.75rem; color: var(--primary); font-weight: 600; }
+  .profile-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .profile-meta-item { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 0.75rem 0.8rem; }
+  .profile-meta-label { display: block; font-size: 0.72rem; color: var(--gray-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
+  .profile-meta-value { font-size: 0.86rem; font-weight: 600; color: var(--gray-800); }
+  .profile-links-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+  .profile-bio { margin-top: 0.8rem; font-size: 0.84rem; color: var(--gray-700); line-height: 1.5; }
   .profile-right { display: flex; flex-direction: column; gap: 1.5rem; }
 
   /* ========== HACKATHONS ========== */
@@ -340,10 +348,15 @@
   /* ========== MODAL ========== */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
-  .modal { background: var(--white); border-radius: var(--radius-lg); padding: 2rem; width: 460px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal { background: var(--white); border-radius: var(--radius-lg); padding: 2rem; width: 460px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
   .modal h2 { font-size: 1.3rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
   .modal p { color: var(--gray-600); font-size: 0.9rem; margin-bottom: 1.8rem; line-height: 1.6; }
   .modal-actions { display: flex; gap: 1rem; }
+  .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .edit-grid .field { margin-bottom: 0; }
+  .edit-grid .full { grid-column: 1 / -1; }
+  .edit-section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-600); margin: 1rem 0 0.6rem; }
+  .edit-hint { font-size: 0.75rem; color: var(--gray-500); margin-top: -0.4rem; margin-bottom: 0.9rem; }
   .btn-cancel { background: var(--gray-100); color: var(--gray-900); border: none; border-radius: 10px; padding: 0.9rem 1.5rem; font-family: inherit; font-weight: 600; cursor: pointer; flex: 1; transition: all 0.2s; }
   .btn-cancel:hover { background: var(--gray-200); }
   .btn-confirm { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; border: none; border-radius: 10px; padding: 0.9rem 1.5rem; font-family: inherit; font-weight: 600; cursor: pointer; flex: 1; transition: all 0.2s; }
@@ -417,8 +430,8 @@
       <div class="role-hint" id="login-role-hint"><i class="fas fa-info-circle"></i> Student mode: use student account credentials.</div>
       <div class="error-msg" id="login-error" role="alert" aria-live="assertive"><i class="fas fa-exclamation-circle"></i> Invalid credentials. Try admin / password</div>
       <div class="field">
-        <label>Username</label>
-        <input type="text" id="login-user" placeholder="alex.johnson" autocomplete="username" />
+        <label>Email</label>
+        <input type="email" id="login-user" placeholder="student@campus.edu" autocomplete="email" />
       </div>
       <div class="field">
         <label>Password</label>
@@ -439,8 +452,9 @@
     <div style="text-align:center;margin-bottom:1.5rem;font-size:0.8rem;color:var(--gray-600);letter-spacing:.1em;font-weight:600;">CAMPUS CONNECT</div>
     <div class="signup-title">Create Account</div>
     <div class="signup-sub">Sign up to start your Campus Connect journey</div>
+    <div class="info-banner" id="signup-verify-banner" role="status" aria-live="polite"></div>
     <div class="field-light">
-      <input type="text" placeholder="Username (letters and numbers)" id="signup-username" oninput="validateSignupForm()" />
+      <input type="text" placeholder="Display Name (optional)" id="signup-username" oninput="validateSignupForm()" />
     </div>
     <div class="inline-error" id="signup-username-error"></div>
     <div class="field-light">
@@ -494,6 +508,15 @@
       <input type="date" id="profile-dob" oninput="validateProfileForm()" />
     </div>
     <div class="inline-error" id="profile-dob-error"></div>
+
+    <div class="field-light">
+      <select id="profile-role" oninput="validateProfileForm()" style="background:none;border:none;outline:none;font-family:inherit;font-size:0.95rem;width:100%;color:var(--gray-900);">
+        <option value="student">Student</option>
+        <option value="faculty">Faculty</option>
+        <option value="club_admin">Club Admin</option>
+      </select>
+    </div>
+    <div class="inline-error" id="profile-role-error"></div>
 
     <div class="field-light">
       <input type="text" placeholder="Registration Number / Roll Number" id="profile-reg" oninput="validateProfileForm()" />
@@ -721,8 +744,9 @@
           <div class="profile-avatar-wrap">
             <div class="profile-avatar" id="profile-avatar-main">AJ</div>
             <div class="profile-name" id="profile-name-main">Alex Johnson</div>
-            <div class="profile-sub">B.S. Computer Science</div>
-            <div class="profile-sub" style="margin-bottom:1.5rem;"><i class="fas fa-graduation-cap"></i> Year 3  •  GPA: 3.8</div>
+            <div class="profile-sub" id="profile-program-main">B.S. Computer Science</div>
+            <div class="profile-sub" id="profile-academic-main" style="margin-bottom:0.5rem;"><i class="fas fa-graduation-cap"></i> Year 3  •  GPA: 3.8</div>
+            <div class="profile-sub" id="profile-contact-main" style="margin-bottom:1.5rem;"><i class="fas fa-phone"></i> +91 9876543210 • <i class="fas fa-envelope"></i> alex.johnson@student.edu</div>
             <button class="btn-edit" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
             <button class="btn-upload"><i class="fas fa-upload"></i> Upload Content</button>
           </div>
@@ -730,7 +754,7 @@
         <div class="profile-right">
           <div class="profile-section">
             <h3><i class="fas fa-code"></i> Technical Skills</h3>
-            <div class="skill-tags">
+            <div class="skill-tags" id="profile-skills-list">
               <span class="skill-tag">Python</span>
               <span class="skill-tag">Machine Learning</span>
               <span class="skill-tag">Web Development</span>
@@ -738,6 +762,34 @@
               <span class="skill-tag">Node.js</span>
               <span class="skill-tag">Data Analytics</span>
             </div>
+          </div>
+          <div class="profile-section">
+            <h3><i class="fas fa-id-card"></i> Academic / Faculty Info</h3>
+            <div class="profile-meta-grid">
+              <div class="profile-meta-item"><span class="profile-meta-label">Role</span><span class="profile-meta-value" id="profile-role-main">Student</span></div>
+              <div class="profile-meta-item"><span class="profile-meta-label">Department</span><span class="profile-meta-value" id="profile-dept-main">Computer Science</span></div>
+              <div class="profile-meta-item"><span class="profile-meta-label" id="profile-program-label">Program</span><span class="profile-meta-value" id="profile-program-detail-main">B.S. Computer Science</span></div>
+              <div class="profile-meta-item"><span class="profile-meta-label" id="profile-year-label">Year</span><span class="profile-meta-value" id="profile-year-main">Year 3</span></div>
+              <div class="profile-meta-item"><span class="profile-meta-label" id="profile-score-label">CGPA</span><span class="profile-meta-value" id="profile-score-main">3.8</span></div>
+              <div class="profile-meta-item"><span class="profile-meta-label" id="profile-id-label">Registration No.</span><span class="profile-meta-value" id="profile-id-main">2023CS041</span></div>
+            </div>
+            <div class="profile-links-row">
+              <a id="profile-linkedin-main" class="btn-link" target="_blank" rel="noopener" style="display:none;"><i class="fab fa-linkedin"></i> LinkedIn</a>
+              <a id="profile-github-main" class="btn-link" target="_blank" rel="noopener" style="display:none;"><i class="fab fa-github"></i> GitHub / Portfolio</a>
+            </div>
+            <div class="profile-bio" id="profile-bio-main">Building practical products and collaborating in hackathons.</div>
+          </div>
+          <div class="profile-section">
+            <h3><i class="fas fa-users"></i> Joined Clubs</h3>
+            <div id="profile-joined-clubs-list"></div>
+          </div>
+          <div class="profile-section">
+            <h3><i class="fas fa-calendar-check"></i> Joined Projects / Hackathons</h3>
+            <div id="profile-registrations-list"></div>
+          </div>
+          <div class="profile-section">
+            <h3><i class="fas fa-user-friends"></i> Joined Teams</h3>
+            <div id="profile-joined-teams-list"></div>
           </div>
           <div class="profile-section">
             <h3><i class="fas fa-award"></i> Completed Projects</h3>
@@ -814,9 +866,7 @@
         </div>
         <div class="join-team-card">
           <h2><i class="fas fa-handshake"></i> Join Existing Teams</h2>
-          <div class="join-team-item"><span><strong>Team Alpha</strong><br/><span style="font-size:0.8rem;color:var(--gray-600);">Full-Stack Development</span></span><div style="display:flex;gap:0.5rem;"><button class="btn-link" onclick="copyTeamLink('team-alpha')"><i class="fas fa-link"></i> Share</button><button class="btn-join-sm" onclick="openJoinModal('Team Alpha')"><i class="fas fa-plus"></i></button></div></div>
-          <div class="join-team-item"><span><strong>Innovators United</strong><br/><span style="font-size:0.8rem;color:var(--gray-600);">AI & ML Projects</span></span><div style="display:flex;gap:0.5rem;"><button class="btn-link" onclick="copyTeamLink('innovators-united')"><i class="fas fa-link"></i> Share</button><button class="btn-join-sm" onclick="openJoinModal('Innovators')"><i class="fas fa-plus"></i></button></div></div>
-          <div class="join-team-item"><span><strong>Tech Pioneers</strong><br/><span style="font-size:0.8rem;color:var(--gray-600);">Blockchain Development</span></span><div style="display:flex;gap:0.5rem;"><button class="btn-link" onclick="copyTeamLink('tech-pioneers')"><i class="fas fa-link"></i> Share</button><button class="btn-join-sm" onclick="openJoinModal('Tech Pioneers')"><i class="fas fa-plus"></i></button></div></div>
+          <div id="team-list" class="club-list"></div>
         </div>
       </div>
       <div class="team-members-section">
@@ -948,13 +998,16 @@
     <!-- PROJECTS PAGE -->
     <div id="page-projects" class="page">
       <h2 style="margin-bottom:2rem;font-size:1.3rem;font-weight:700;"><i class="fas fa-folder-open"></i> My Projects</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:1.5rem;">
+      <div id="projects-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:1.5rem;">
         <div class="dash-card">
           <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:10px;height:100px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:0.5rem;color:white;font-weight:700;">AI</div>
           <h3><i class="fas fa-brain"></i> AI Chatbot</h3>
           <p>NLP-powered chatbot for intelligent student support and guidance</p>
           <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
           <div class="dash-card-meta"><span><i class="fas fa-calendar"></i> Fall 2024</span><span style="color:var(--primary);font-weight:700;">85/100</span></div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-join" style="min-width:120px;" onclick="openJoinModal('AI Chatbot')"><i class="fas fa-plus-circle"></i> Join Project</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);border-radius:10px;height:100px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:0.5rem;color:white;font-weight:700;">🎮</div>
@@ -962,6 +1015,9 @@
           <p>2D platformer game built with Unity and C# featuring engaging mechanics</p>
           <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
           <div class="dash-card-meta"><span><i class="fas fa-calendar"></i> Spring 2024</span><span style="color:var(--success);font-weight:700;">90/100</span></div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-join" style="min-width:120px;" onclick="openJoinModal('Game Design')"><i class="fas fa-plus-circle"></i> Join Project</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="background:linear-gradient(135deg, #34d399 0%, #10b981 100%);border-radius:10px;height:100px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:0.5rem;color:white;font-weight:700;">📊</div>
@@ -969,6 +1025,9 @@
           <p>Climate data visualization with Python, Pandas, and D3.js integration</p>
           <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
           <div class="dash-card-meta"><span><i class="fas fa-calendar"></i> Fall 2024</span><span style="color:var(--primary);font-weight:700;">78/100</span></div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-join" style="min-width:120px;" onclick="openJoinModal('Data Analytics')"><i class="fas fa-plus-circle"></i> Join Project</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="background:linear-gradient(135deg, #f87171 0%, #ef4444 100%);border-radius:10px;height:100px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:0.5rem;color:white;font-weight:700;">🌐</div>
@@ -976,6 +1035,9 @@
           <p>Full-stack web application using React, Node.js, and MongoDB</p>
           <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
           <div class="dash-card-meta"><span><i class="fas fa-spinner"></i> In Progress</span><span style="color:var(--warning);font-weight:700;">60%</span></div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-join" style="min-width:120px;" onclick="openJoinModal('Web Dev Jam')"><i class="fas fa-plus-circle"></i> Join Project</button>
+          </div>
         </div>
       </div>
     </div>
@@ -986,42 +1048,54 @@
       <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
         <button class="btn-purple" id="open-club-portal-btn" onclick="showPage('page-club-portal',document.querySelectorAll('.nav-item')[4])"><i class="fas fa-building"></i> Open Club Portal</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:1.5rem;">
+      <div id="clubs-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:1.5rem;">
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-laptop-code"></i></div>
           <h3>CS Society</h3>
           <p>Weekly coding sessions, hackathons, technical talks and peer learning</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;"><i class="fas fa-check-circle"></i> Joined</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);" onclick="openJoinModal('CS Society')"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-brain"></i></div>
           <h3>AI Research Club</h3>
           <p>Deep dive into machine learning, NLP, computer vision and research</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" onclick="openJoinModal('AI Research Club')" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" onclick="openJoinModal('AI Research Club')" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-palette"></i></div>
           <h3>Design Guild</h3>
           <p>UI/UX workshops, design sprints, portfolio reviews and collaboration</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" onclick="openJoinModal('Design Guild')" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" onclick="openJoinModal('Design Guild')" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-mobile-alt"></i></div>
           <h3>Mobile Dev Lab</h3>
           <p>iOS and Android development workshops, frameworks and best practices</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" onclick="openJoinModal('Mobile Dev Lab')" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" onclick="openJoinModal('Mobile Dev Lab')" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-cube"></i></div>
           <h3>Blockchain Society</h3>
           <p>Web3, DeFi, smart contracts and decentralized application development</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" onclick="openJoinModal('Blockchain Society')" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" onclick="openJoinModal('Blockchain Society')" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
         <div class="dash-card">
           <div style="font-size:2.5rem;margin-bottom:0.5rem;"><i class="fas fa-leaf"></i></div>
           <h3>GreenTech Initiative</h3>
           <p>Sustainable technology solutions and environmental impact projects</p>
-          <div style="margin-top:1rem;"><button class="btn-purple" onclick="openJoinModal('GreenTech Initiative')" style="font-size:0.8rem;padding:0.6rem 1rem;width:100%;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join</button></div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn-purple" onclick="openJoinModal('GreenTech Initiative')" style="font-size:0.8rem;padding:0.6rem 1rem;min-width:120px;background:var(--primary);"><i class="fas fa-plus-circle"></i> Join Club</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1117,11 +1191,69 @@
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <h2><i class="fas fa-user-edit"></i> Edit Your Profile</h2>
-    <p>Update your information and keep your profile fresh</p>
-    <div class="field" style="margin-bottom:1.5rem;background:var(--gray-50);">
-      <label>Full Name</label>
-      <input type="text" id="edit-name" value="Alex Johnson" />
+    <p>Update core details for student or faculty style profiles. These fields are future-ready for role-based editing.</p>
+
+    <div class="edit-section-title">Identity</div>
+    <div class="edit-grid">
+      <div class="field" style="background:var(--gray-50);">
+        <label>Full Name</label>
+        <input type="text" id="edit-name" value="Alex Johnson" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>Profile Role</label>
+        <input type="text" id="edit-role" value="Student" placeholder="Student / Faculty" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>Email</label>
+        <input type="email" id="edit-email" value="alex.johnson@student.edu" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>Phone Number</label>
+        <input type="text" id="edit-phone" value="+91 9876543210" placeholder="+919876543210" />
+      </div>
     </div>
+
+    <div class="edit-section-title">Academic / Professional</div>
+    <div class="edit-grid">
+      <div class="field" style="background:var(--gray-50);">
+        <label>Department</label>
+        <input type="text" id="edit-dept" value="Computer Science" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>Program / Designation</label>
+        <input type="text" id="edit-program" value="B.S. Computer Science" placeholder="B.Tech / Assistant Professor" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>Year / Experience</label>
+        <input type="text" id="edit-year" value="Year 3" placeholder="Year 3 / 5 years experience" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>CGPA / Rating</label>
+        <input type="text" id="edit-cgpa" value="3.8" placeholder="0.0 - 10.0" />
+      </div>
+      <div class="field full" style="background:var(--gray-50);">
+        <label>Registration / Employee ID</label>
+        <input type="text" id="edit-id" value="2023CS041" placeholder="Roll number or faculty employee ID" />
+      </div>
+    </div>
+
+    <div class="edit-section-title">Links & Bio</div>
+    <div class="edit-grid">
+      <div class="field" style="background:var(--gray-50);">
+        <label>LinkedIn</label>
+        <input type="url" id="edit-linkedin" value="" placeholder="https://linkedin.com/in/username" />
+      </div>
+      <div class="field" style="background:var(--gray-50);">
+        <label>GitHub / Portfolio</label>
+        <input type="url" id="edit-github" value="" placeholder="https://github.com/username" />
+      </div>
+      <div class="field full" style="background:var(--gray-50);">
+        <label>Bio</label>
+        <input type="text" id="edit-bio" value="Building practical products and collaborating in hackathons." placeholder="Short professional summary" />
+      </div>
+    </div>
+    <div class="edit-hint">Tip: Keep this updated for better hackathon matching and team invites.</div>
+
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEditModal()"><i class="fas fa-times"></i> Cancel</button>
       <button class="btn-confirm" onclick="saveProfile()"><i class="fas fa-save"></i> Save</button>
@@ -1139,9 +1271,30 @@
     name: 'Alex Johnson',
     initials: 'AJ',
     email: 'alex.johnson@student.edu',
+    phone: '+91 9876543210',
+    profileRole: 'Student',
+    department: 'Computer Science',
+    program: 'B.S. Computer Science',
+    yearOrExperience: 'Year 3',
+    cgpa: '3.8',
+    idNumber: '2023CS041',
+    linkedIn: '',
+    githubOrPortfolio: '',
+    bio: 'Building practical products and collaborating in hackathons.',
     role: 'student',
     canManageClubs: false
   };
+
+  // Bridge for module scripts: legacy UI reads this closure-scoped object.
+  window.__ccGetCurrentUser = function () {
+    return { ...currentUser };
+  };
+
+  window.__ccSetCurrentUser = function (patch) {
+    if (!patch || typeof patch !== 'object') return;
+    currentUser = { ...currentUser, ...patch };
+  };
+
   let calYear, calMonth;
   let modalCallback = null;
   let selectedLoginRole = 'student';
@@ -1423,6 +1576,45 @@
     }
   }
 
+  function applyProfileDataToCurrentUser(profile) {
+    if (!profile) return;
+    currentUser.name = profile.fullName || currentUser.name;
+    currentUser.initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    currentUser.email = profile.email || currentUser.email;
+    currentUser.phone = profile.phone || currentUser.phone;
+    currentUser.department = profile.department || currentUser.department;
+    currentUser.program = profile.program || currentUser.program || ('B.S. ' + (profile.department || currentUser.department || 'Program'));
+    currentUser.yearOrExperience = profile.yearOfStudy || profile.yearOrExperience || currentUser.yearOrExperience;
+    currentUser.cgpa = profile.cgpa || currentUser.cgpa;
+    currentUser.idNumber = profile.registrationNumber || profile.idNumber || currentUser.idNumber;
+    currentUser.linkedIn = profile.linkedIn || currentUser.linkedIn;
+    currentUser.githubOrPortfolio = profile.githubOrPortfolio || currentUser.githubOrPortfolio;
+    currentUser.bio = profile.bio || currentUser.bio;
+    currentUser.profileRole = profile.profileRole || (currentUser.role === 'clubAdmin' ? 'Faculty / Club Admin' : 'Student');
+  }
+
+  function persistCurrentUserProfile() {
+    const username = (currentUser.username || '').toLowerCase();
+    if (!username) return;
+    const existing = getStoredProfile(username) || {};
+    localStorage.setItem('cc_profile_' + username, JSON.stringify({
+      ...existing,
+      username,
+      email: currentUser.email,
+      fullName: currentUser.name,
+      phone: currentUser.phone,
+      department: currentUser.department,
+      program: currentUser.program,
+      yearOfStudy: currentUser.yearOrExperience,
+      cgpa: currentUser.cgpa,
+      registrationNumber: currentUser.idNumber,
+      linkedIn: currentUser.linkedIn,
+      githubOrPortfolio: currentUser.githubOrPortfolio,
+      bio: currentUser.bio,
+      profileRole: currentUser.profileRole
+    }));
+  }
+
   function getAccount(username) {
     const key = normalizeUsername(username);
     if (userDirectory[key]) return userDirectory[key];
@@ -1531,6 +1723,7 @@
       currentUser.email = account.email;
       currentUser.role = account.role;
       currentUser.canManageClubs = account.canManageClubs;
+      applyProfileDataToCurrentUser(getStoredProfile(user));
 
       err.style.display = 'none';
       showView('view-app');
@@ -1776,6 +1969,13 @@
     currentUser.name = fullName;
     currentUser.initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     currentUser.email = profileData.email;
+    currentUser.phone = profileData.phone;
+    currentUser.department = profileData.department;
+    currentUser.program = 'B.S. ' + profileData.department;
+    currentUser.yearOrExperience = profileData.yearOfStudy;
+    currentUser.cgpa = currentUser.cgpa || 'N/A';
+    currentUser.idNumber = profileData.registrationNumber;
+    currentUser.profileRole = 'Student';
     currentUser.role = 'student';
     currentUser.canManageClubs = false;
 
@@ -1852,6 +2052,16 @@
       name: 'Alex Johnson',
       initials: 'AJ',
       email: 'alex.johnson@student.edu',
+      phone: '+91 9876543210',
+      profileRole: 'Student',
+      department: 'Computer Science',
+      program: 'B.S. Computer Science',
+      yearOrExperience: 'Year 3',
+      cgpa: '3.8',
+      idNumber: '2023CS041',
+      linkedIn: '',
+      githubOrPortfolio: '',
+      bio: 'Building practical products and collaborating in hackathons.',
       role: 'student',
       canManageClubs: false
     };
@@ -2164,7 +2374,9 @@
         <p><strong>Team Size:</strong> ${h.teamSize}</p>
         <p><strong>Hosted By:</strong> ${h.organizer}</p>
         <p style="color:var(--gray-600);margin-top:0.5rem;"><i class="fas fa-calendar"></i> Starts: ${h.startDate}${h.prize ? ' • ' + h.prize : ''}</p>
-        <button class="btn-join" onclick="openJoinModal('${h.title.replace(/'/g, "\\'")}')"><i class="fas fa-plus-circle"></i> Join</button>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn-join" onclick="openJoinModal('${h.title.replace(/'/g, "\\'")}')"><i class="fas fa-plus-circle"></i> Join Hackathon</button>
+        </div>
       `;
       grid.appendChild(card);
     });
@@ -2259,15 +2471,54 @@
   function closeModal() { document.getElementById('modal').classList.remove('open'); }
   function confirmModal() { closeModal(); if(modalCallback) { modalCallback(); modalCallback=null; } }
 
-  function openEditModal() { document.getElementById('edit-modal').classList.add('open'); }
   function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
   function saveProfile() {
     const name = document.getElementById('edit-name').value.trim();
-    if (name) {
-      currentUser.name = name;
-      currentUser.initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-      updateUserUI();
+    const profileRole = document.getElementById('edit-role').value.trim();
+    const email = document.getElementById('edit-email').value.trim().toLowerCase();
+    const phone = document.getElementById('edit-phone').value.trim();
+    const department = document.getElementById('edit-dept').value.trim();
+    const program = document.getElementById('edit-program').value.trim();
+    const yearOrExperience = document.getElementById('edit-year').value.trim();
+    const cgpa = document.getElementById('edit-cgpa').value.trim();
+    const idNumber = document.getElementById('edit-id').value.trim();
+    const linkedIn = document.getElementById('edit-linkedin').value.trim();
+    const githubOrPortfolio = document.getElementById('edit-github').value.trim();
+    const bio = document.getElementById('edit-bio').value.trim();
+
+    if (!name || name.length < 2) {
+      showToast('Enter a valid full name');
+      return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email)) {
+      showToast('Enter a valid email address');
+      return;
+    }
+    if (phone && !/^\+?[1-9]\d{9,14}$/.test(phone.replace(/[\s()-]/g, '')) && !/^\d{10}$/.test(phone.replace(/[\s()-]/g, ''))) {
+      showToast('Enter a valid phone number');
+      return;
+    }
+    if (cgpa && !/^\d(\.\d{1,2})?$|^10(\.0{1,2})?$/.test(cgpa)) {
+      showToast('CGPA must be between 0 and 10');
+      return;
+    }
+
+    currentUser.name = name;
+    currentUser.initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    currentUser.profileRole = profileRole || currentUser.profileRole;
+    currentUser.email = email;
+    currentUser.phone = phone || currentUser.phone;
+    currentUser.department = department || currentUser.department;
+    currentUser.program = program || currentUser.program;
+    currentUser.yearOrExperience = yearOrExperience || currentUser.yearOrExperience;
+    currentUser.cgpa = cgpa || currentUser.cgpa;
+    currentUser.idNumber = idNumber || currentUser.idNumber;
+    currentUser.linkedIn = linkedIn;
+    currentUser.githubOrPortfolio = githubOrPortfolio;
+    currentUser.bio = bio;
+
+    updateUserUI();
+    persistCurrentUserProfile();
     closeEditModal();
     showToast('Profile updated successfully!');
   }
@@ -2279,6 +2530,76 @@
     document.getElementById('topbar-avatar').textContent = currentUser.initials;
     document.getElementById('profile-avatar-main').textContent = currentUser.initials;
     document.getElementById('profile-name-main').textContent = currentUser.name;
+
+    const isFaculty = /faculty|professor|lecturer|admin/i.test(currentUser.profileRole || '') || currentUser.role === 'clubAdmin';
+    const roleText = currentUser.profileRole || (isFaculty ? 'Faculty' : 'Student');
+    const programLabel = isFaculty ? 'Designation' : 'Program';
+    const yearLabel = isFaculty ? 'Experience' : 'Year';
+    const scoreLabel = isFaculty ? 'Rating' : 'CGPA';
+    const idLabel = isFaculty ? 'Employee ID' : 'Registration No.';
+
+    const programText = currentUser.program || 'Program details not set';
+    const academicText = (currentUser.yearOrExperience || (isFaculty ? 'Experience not set' : 'Year not set')) + '  •  ' + (currentUser.cgpa ? ((isFaculty ? 'Rating' : 'CGPA') + ': ' + currentUser.cgpa) : ((isFaculty ? 'Rating' : 'CGPA') + ' not set'));
+    const contactText = '<i class="fas fa-phone"></i> ' + (currentUser.phone || 'Phone not set') + ' • <i class="fas fa-envelope"></i> ' + currentUser.email;
+    const programEl = document.getElementById('profile-program-main');
+    const academicEl = document.getElementById('profile-academic-main');
+    const contactEl = document.getElementById('profile-contact-main');
+    if (programEl) programEl.textContent = programText;
+    if (academicEl) academicEl.innerHTML = '<i class="fas fa-graduation-cap"></i> ' + academicText;
+    if (contactEl) contactEl.innerHTML = contactText;
+
+    const roleEl = document.getElementById('profile-role-main');
+    const deptEl = document.getElementById('profile-dept-main');
+    const programDetailEl = document.getElementById('profile-program-detail-main');
+    const yearEl = document.getElementById('profile-year-main');
+    const scoreEl = document.getElementById('profile-score-main');
+    const idEl = document.getElementById('profile-id-main');
+    const programLabelEl = document.getElementById('profile-program-label');
+    const yearLabelEl = document.getElementById('profile-year-label');
+    const scoreLabelEl = document.getElementById('profile-score-label');
+    const idLabelEl = document.getElementById('profile-id-label');
+    const bioEl = document.getElementById('profile-bio-main');
+
+    if (roleEl) roleEl.textContent = roleText;
+    if (deptEl) deptEl.textContent = currentUser.department || 'Not set';
+    if (programDetailEl) programDetailEl.textContent = currentUser.program || 'Not set';
+    if (yearEl) yearEl.textContent = currentUser.yearOrExperience || 'Not set';
+    if (scoreEl) scoreEl.textContent = currentUser.cgpa || 'Not set';
+    if (idEl) idEl.textContent = currentUser.idNumber || 'Not set';
+    if (programLabelEl) programLabelEl.textContent = programLabel;
+    if (yearLabelEl) yearLabelEl.textContent = yearLabel;
+    if (scoreLabelEl) scoreLabelEl.textContent = scoreLabel;
+    if (idLabelEl) idLabelEl.textContent = idLabel;
+    if (bioEl) bioEl.textContent = currentUser.bio || 'No bio added yet.';
+
+    const linkedInEl = document.getElementById('profile-linkedin-main');
+    const githubEl = document.getElementById('profile-github-main');
+    if (linkedInEl) {
+      const validLinkedIn = /^https?:\/\//i.test(currentUser.linkedIn || '');
+      linkedInEl.style.display = validLinkedIn ? 'inline-flex' : 'none';
+      if (validLinkedIn) linkedInEl.href = currentUser.linkedIn;
+    }
+    if (githubEl) {
+      const validGithub = /^https?:\/\//i.test(currentUser.githubOrPortfolio || '');
+      githubEl.style.display = validGithub ? 'inline-flex' : 'none';
+      if (validGithub) githubEl.href = currentUser.githubOrPortfolio;
+    }
+  }
+
+  function openEditModal() {
+    document.getElementById('edit-name').value = currentUser.name || '';
+    document.getElementById('edit-role').value = currentUser.profileRole || 'Student';
+    document.getElementById('edit-email').value = currentUser.email || '';
+    document.getElementById('edit-phone').value = currentUser.phone || '';
+    document.getElementById('edit-dept').value = currentUser.department || '';
+    document.getElementById('edit-program').value = currentUser.program || '';
+    document.getElementById('edit-year').value = currentUser.yearOrExperience || '';
+    document.getElementById('edit-cgpa').value = currentUser.cgpa || '';
+    document.getElementById('edit-id').value = currentUser.idNumber || '';
+    document.getElementById('edit-linkedin').value = currentUser.linkedIn || '';
+    document.getElementById('edit-github').value = currentUser.githubOrPortfolio || '';
+    document.getElementById('edit-bio').value = currentUser.bio || '';
+    document.getElementById('edit-modal').classList.add('open');
   }
 
   function updateAccessUI() {
@@ -2344,8 +2665,23 @@
   document.getElementById('modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
   document.getElementById('edit-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeEditModal(); });
 
+  function isSupabaseModeEnabled() {
+    const cfg = window.CAMPUS_CONNECT_CONFIG || {};
+    const url = String(cfg.supabaseUrl || '').trim();
+    const key = String(cfg.supabaseAnonKey || '').trim();
+    if (!url || !key) return false;
+    const combined = (url + ' ' + key).toUpperCase();
+    return !combined.includes('YOUR_PROJECT_REF') && !combined.includes('YOUR_SUPABASE_ANON_KEY') && !combined.includes('YOUR_');
+  }
+
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', function() {
+    if (isSupabaseModeEnabled()) {
+      navigateFromSharedTeamUrl();
+      window.addEventListener('hashchange', navigateFromSharedTeamUrl);
+      return;
+    }
+
     initializeAuthAccessibility();
     initializeAuthFieldBindings();
     updatePasswordChecklist(document.getElementById('signup-password')?.value || '');
@@ -2360,5 +2696,8 @@
     window.addEventListener('hashchange', navigateFromSharedTeamUrl);
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./js/config.js"></script>
+<script type="module" src="./js/app.supabase.js"></script>
 </body>
 </html>
