@@ -236,6 +236,7 @@ async function refreshData() {
   renderTeams();
   renderProfileSummary();
   renderManagementList();
+  await loadTeamMembers();
   await renderDashboardSummary();
 }
 
@@ -1236,3 +1237,30 @@ document.querySelectorAll('.nav-item').forEach(item => {
     }
   });
 });
+
+async function loadTeamMembers() {
+  const membersGrid = document.querySelector('.members-grid');
+  if (!membersGrid) return;
+
+  const { data, error } = await supabase
+    .from('team_members')
+    .select('user_id, profiles(full_name, department, year, role, skills)')
+    .order('joined_at', { ascending: true });
+
+  if (error || !data || !data.length) return;
+
+  membersGrid.innerHTML = data.map(m => {
+    const p = m.profiles;
+    const initials = (p.full_name || 'U')
+      .split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    const role = p.role === 'faculty' ? 'Faculty' :
+                 p.role === 'club_admin' ? 'Club Admin' : 'Student';
+    return `
+      <div class="member-card">
+        <div class="member-avatar">${initials}</div>
+        <div class="member-name">${p.full_name || 'Unknown'}</div>
+        <div class="member-role">${role} • ${p.department || ''}</div>
+      </div>
+    `;
+  }).join('');
+}
