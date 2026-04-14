@@ -18,6 +18,18 @@ function normalizeSupabaseError(error, fallbackMessage) {
     );
   }
   if (messageLower.includes('duplicate key value') || messageLower.includes('already exists')) {
+    if (messageLower.includes('user_already_exists') || messageLower.includes('user already registered')) {
+      return new Error('This email is already registered. Please sign in instead, or use a different email.');
+    }
+    if (messageLower.includes('registrations_project_unique') || messageLower.includes('registrations_hackathon_unique') || (messageLower.includes('registrations') && messageLower.includes('duplicate'))) {
+      return new Error('You are already registered for this item.');
+    }
+    if (messageLower.includes('team_members') && messageLower.includes('duplicate')) {
+      return new Error('You have already joined this team.');
+    }
+    if (messageLower.includes('memberships') && messageLower.includes('duplicate')) {
+      return new Error('You have already joined this club.');
+    }
     if (messageLower.includes('registration_number')) {
       return new Error('This registration number is already in use. Please use a different one.');
     }
@@ -49,6 +61,9 @@ function mapSupabaseNetworkError(error, fallbackMessage) {
     return new Error(
       'Unable to reach Supabase. Check js/config.js values, internet connection, and whether your Supabase project is active.'
     );
+  }
+  if (message.toLowerCase().includes('user_already_exists') || message.toLowerCase().includes('user already registered')) {
+    return new Error('This email is already registered. Please sign in instead, or use a different email.');
   }
   return new Error(message || fallbackMessage || 'Supabase request failed');
 }
@@ -264,7 +279,7 @@ export async function leaveClub(userId, clubId) {
 export async function registerProject(userId, projectId) {
   const { error } = await supabase
     .from('registrations')
-    .upsert({ user_id: userId, project_id: projectId, hackathon_id: null }, { onConflict: 'user_id,project_id' });
+    .insert({ user_id: userId, project_id: projectId, hackathon_id: null });
 
   throwOnError(error, 'Could not register project');
 }
@@ -282,7 +297,7 @@ export async function unregisterProject(userId, projectId) {
 export async function registerHackathon(userId, hackathonId) {
   const { error } = await supabase
     .from('registrations')
-    .upsert({ user_id: userId, project_id: null, hackathon_id: hackathonId }, { onConflict: 'user_id,hackathon_id' });
+    .insert({ user_id: userId, project_id: null, hackathon_id: hackathonId });
 
   throwOnError(error, 'Could not register hackathon');
 }

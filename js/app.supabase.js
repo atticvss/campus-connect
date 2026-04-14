@@ -809,6 +809,9 @@ function wireSupabaseAuthFlow() {
     } catch (error) {
       setError(error.message);
       setInlineErrorText('signup-email-error', error.message || 'Signup failed');
+      if (String(error.message || '').toLowerCase().includes('already registered')) {
+        setSignupBanner('This email already has an account. Use Sign In instead, or try a different email for a new account.');
+      }
       showToast(error.message || 'Signup failed');
     } finally {
       setLoading('signup-submit', false, 'Creating Account...');
