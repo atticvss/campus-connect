@@ -66,13 +66,14 @@ http://localhost:3000
 
 ## 🔐 Login Credentials
 
+This project is configured for Supabase auth. Use the accounts you created in Supabase, or click **Sign Up** to create a new profile.
+
+Static fallback/demo mode only keeps club admin demo access:
+
 | Username       | Password  |
 |----------------|-----------|
 | `admin`        | `password`|
-| `alex.johnson` | `password`|
-| `alex.johnson` | `123456`  |
-
-> You can also click **Sign Up** to create a new profile.
+| `club.admin`   | `password`|
 
 ---
 
@@ -103,10 +104,10 @@ http://localhost:3000
 
 ## 🛠 Customisation
 
-### Change the default user
+### Change the default placeholder user
 In `index.html`, find the `currentUser` object near the top of the `<script>` tag:
 ```js
-let currentUser = { name: 'Alex Johnson', initials: 'AJ' };
+let currentUser = { name: 'Campus User', initials: 'CU' };
 ```
 
 ### Add more hackathons
