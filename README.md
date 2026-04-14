@@ -1,188 +1,119 @@
-# 🎓 Campus Connect — Setup Guide
+# Campus Connect
 
-A student campus management web application with dashboards, hackathons, teams, profiles, and notifications.
+Campus Connect is a browser-based campus networking app for students, clubs, projects, hackathons, teams, and profiles. The frontend is plain HTML/CSS/JavaScript, and the live app uses Supabase for authentication, profiles, and activity data.
 
-For Supabase full-stack setup (Auth + PostgreSQL + RLS + JS integration), see `SUPABASE_SETUP.md`.
+## What It Does
 
----
+- Email/password signup and login with Supabase
+- Profile setup with role, registration number, department, skills, and bio
+- Join and leave clubs
+- Register and unregister for hackathons and projects
+- Create teams and join teams
+- Show hackathon cards with recruiting teams and open member slots
+- Role-based management for clubs, projects, and hackathons
 
-## 📁 Project Structure
+## Project Structure
 
-```
+```text
 campus-connect/
-├── index.html        # The entire application (single-file SPA)
-└── README.md         # This setup guide
+├── index.html
+├── README.md
+├── IMPROVEMENTS.md
+├── SUPABASE_SETUP.md
+├── js/
+│   ├── api.js
+│   ├── app.supabase.js
+│   ├── config.example.js
+│   ├── config.js
+│   └── supabaseClient.js
+└── supabase/
+    └── schema.sql
 ```
 
----
+## Run Locally
 
-## 🚀 Quick Start (3 ways)
+### Option 1: Python
 
-### Option 1 — Python (Recommended, zero install)
-
-**macOS / Linux:**
 ```bash
 cd campus-connect
 python3 -m http.server 3000
 ```
 
-**Windows:**
-```cmd
-cd campus-connect
-python -m http.server 3000
-```
+Open [http://localhost:3000](http://localhost:3000)
 
-Then open your browser and go to:
-```
-http://localhost:3000
-```
+### Option 2: VS Code Live Server
 
----
+1. Open the folder in VS Code
+2. Start Live Server on `index.html`
+3. Open the served URL in your browser
 
-### Option 2 — Node.js (`npx serve`)
+## Authentication
 
-Requires Node.js installed — https://nodejs.org
+This project is intended to run with Supabase auth.
 
-```bash
-cd campus-connect
-npx serve . -p 3000
-```
+- Use your real Supabase account to sign in
+- Use **Create Account** to register a new account
+- If an email already exists, the app now tells the user to sign in instead
 
-Then open:
-```
-http://localhost:3000
-```
+Fallback demo login is still available only for static/admin testing:
 
----
+| Username | Password |
+|----------|----------|
+| `admin` | `password` |
+| `club.admin` | `password` |
 
-### Option 3 — VS Code Live Server
+## Supabase Setup
 
-1. Open the `campus-connect` folder in **VS Code**
-2. Install the **Live Server** extension (by Ritwick Dey)
-3. Right-click `index.html` → **"Open with Live Server"**
-4. Browser opens automatically at `http://127.0.0.1:5500`
+1. Create a Supabase project
+2. Run `supabase/schema.sql` in the Supabase SQL Editor
+3. In Supabase Auth, enable Email provider
+4. For easier testing, keep email auto-confirm enabled or disable email confirmation
+5. Put your project URL and anon key in `js/config.js`
 
----
+Example:
 
-## 🔐 Login Credentials
-
-This project is configured for Supabase auth. Use the accounts you created in Supabase, or click **Sign Up** to create a new profile.
-
-Static fallback/demo mode only keeps club admin demo access:
-
-| Username       | Password  |
-|----------------|-----------|
-| `admin`        | `password`|
-| `club.admin`   | `password`|
-
----
-
-## 📱 Pages & Features
-
-| Page            | Description                                               |
-|-----------------|-----------------------------------------------------------|
-| **Login**       | Credential-based sign in / sign up flow                   |
-| **Dashboard**   | Overview cards, live navigable calendar, project scores   |
-| **Hackathons**  | Filterable hackathon grid with skill-based search & join  |
-| **Profile**     | Skills, completed projects, hackathon experience          |
-| **Team**        | Create/join teams, member list, discussion forum          |
-| **Notifications** | Activity feed, per-category notification toggles        |
-| **Projects**    | Project cards with progress bars and scores               |
-| **Clubs**       | Joinable campus clubs                                     |
-| **Preferences** | Account settings and notification preferences             |
-
----
-
-## 🎨 Tech Stack
-
-- **Pure HTML / CSS / JavaScript** — no frameworks, no build step
-- **Google Fonts** — DM Sans + Fraunces (loaded via CDN)
-- **Unsplash** — placeholder images (loaded via CDN)
-- **No npm install required**
-
----
-
-## 🛠 Customisation
-
-### Change the default placeholder user
-In `index.html`, find the `currentUser` object near the top of the `<script>` tag:
 ```js
-let currentUser = { name: 'Campus User', initials: 'CU' };
-```
-
-### Add more hackathons
-Find the `<div id="hack-grid">` section and copy an existing `.hack-card` block:
-```html
-<div class="hack-card purple" data-skills="python,ai">
-  <h3>Your Hackathon Title</h3>
-  <p>Required Skills: Python, AI</p>
-  <p>Team Size: 2-4 members</p>
-  <button class="btn-join" onclick="openJoinModal('Your Hackathon Title')">Join</button>
-</div>
-```
-
-### Add calendar events
-Find the `events` object in the `<script>` tag:
-```js
-const events = {
-  '4':  [{ text: 'Hackathon 1', sub: 'Team A 1PM' }],
-  '10': [{ text: 'Profile Setup', sub: 'Team B 5PM' }],
-  // Add more: '22': [{ text: 'My Event', sub: 'Details here' }]
+window.CAMPUS_CONNECT_CONFIG = {
+  supabaseUrl: 'https://YOUR_PROJECT_REF.supabase.co',
+  supabaseAnonKey: 'YOUR_SUPABASE_ANON_KEY'
 };
 ```
 
-### Change the colour scheme
-Edit the CSS variables at the top of the `<style>` tag:
-```css
-:root {
-  --purple: #b97cf8;        /* Primary accent colour */
-  --purple-dark: #7c3aed;   /* Hover / active state */
-  --sidebar-bg: #1c1b2e;    /* Sidebar background */
+For full setup details, see [SUPABASE_SETUP.md](/Users/avibhargava/Desktop/FullStacks/campus-connect/SUPABASE_SETUP.md).
+
+## Roles
+
+Supported profile roles:
+
+- `student`
+- `faculty`
+- `club_admin`
+
+Admin-only hackathon management uses Supabase auth metadata:
+
+```json
+{
+  "role": "admin"
 }
 ```
 
----
+## Team and Hackathon Flow
 
-## 🌐 Deploying Online (optional)
+- Teams can be created with a hackathon tag, max member count, and skill tags
+- Team cards show current member count and whether the team still needs members
+- Hackathon cards surface recruiting teams so students can directly join them
+- Registration and duplicate handling are wired for Supabase-backed data
 
-### Netlify Drop (easiest)
-1. Go to https://app.netlify.com/drop
-2. Drag and drop the `campus-connect` folder
-3. Your app is live in seconds — no account needed
+## Main Files
 
-### GitHub Pages
-1. Push the folder to a GitHub repository
-2. Go to **Settings → Pages → Source → main branch / root**
-3. Access at `https://<your-username>.github.io/<repo-name>`
+- [index.html](/Users/avibhargava/Desktop/FullStacks/campus-connect/index.html): base UI, layout, shared styles, and fallback logic
+- [js/app.supabase.js](/Users/avibhargava/Desktop/FullStacks/campus-connect/js/app.supabase.js): live Supabase auth and UI rendering
+- [js/api.js](/Users/avibhargava/Desktop/FullStacks/campus-connect/js/api.js): Supabase API calls and error handling
+- [supabase/schema.sql](/Users/avibhargava/Desktop/FullStacks/campus-connect/supabase/schema.sql): database schema, indexes, and RLS policies
 
----
+## Notes
 
-## 📋 Requirements
-
-| Method         | Requirement                        |
-|----------------|------------------------------------|
-| Python server  | Python 3.x (pre-installed on macOS/Linux) |
-| Node server    | Node.js 14+                        |
-| VS Code        | Live Server extension              |
-| Direct open    | Any modern browser (Chrome, Firefox, Safari, Edge) |
-
-> **Note:** You can also just double-click `index.html` to open it directly in a browser, though some features (fonts, images) require an internet connection since they load from CDNs.
-
----
-
-## 💡 Troubleshooting
-
-**Port already in use?**
-```bash
-python3 -m http.server 8080   # try a different port
-```
-
-**Fonts not loading?**
-Make sure you have an active internet connection — fonts are loaded from Google Fonts CDN.
-
-**Images not showing?**
-Images use Unsplash CDN links and require internet access. For offline use, replace the `src` URLs with local image paths.
-
----
-
-*Built with ❤️ — Campus Connect v1.0*
+- No build step is required
+- Fonts and some assets load from CDNs
+- Never put a Supabase `service_role` key in frontend code
+- If the schema is missing, run `supabase/schema.sql` and refresh
