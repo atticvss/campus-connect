@@ -179,7 +179,7 @@
 ## 🚀 Getting Started
 
 ### Test Credentials
-- Username: `admin` or `alex.johnson`
+- Username: `admin` or your Supabase account email
 - Password: `password` or `123456`
 
 ### Features to Try
@@ -231,4 +231,3 @@ Campus Connect is now a **modern, professional, and fully functional** universit
 - Accessibility compliance
 
 The website now provides an excellent experience for students to discover hackathons, form teams, manage projects, and connect with peers!
-

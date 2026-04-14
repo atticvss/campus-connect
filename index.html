@@ -263,11 +263,22 @@
   .team-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px var(--primary-light); }
   .join-team-card { background: linear-gradient(135deg, var(--primary-light) 0%, #f0e7ff 100%); border-radius: var(--radius-lg); padding: 2rem; border: 1px solid var(--primary); }
   .join-team-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--primary-dark); }
-  .join-team-item { background: var(--white); border-radius: 10px; padding: 1.2rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; transition: all 0.2s; border: 1px solid var(--gray-200); }
+  .team-form-hint { font-size: 0.82rem; color: var(--gray-600); margin: -0.25rem 0 1rem; }
+  .join-team-item { background: var(--white); border-radius: 12px; padding: 1.2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.8rem; transition: all 0.2s; border: 1px solid var(--gray-200); }
   .join-team-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(99,102,241,0.1); }
   .join-team-item span { font-weight: 700; font-size: 0.95rem; color: var(--gray-900); }
+  .join-team-copy { flex: 1; }
+  .join-team-title-row { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .team-slot-pill { font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.24rem 0.55rem; }
+  .team-slot-pill.open { background: #dcfce7; color: #166534; }
+  .team-slot-pill.full { background: #fee2e2; color: #991b1b; }
+  .join-team-meta, .join-team-note { font-size: 0.78rem; color: var(--gray-600); line-height: 1.5; }
+  .join-team-note { margin-top: 0.45rem; }
+  .join-team-actions { display: flex; flex-direction: column; gap: 0.55rem; min-width: 150px; }
   .btn-join-sm { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.2rem; font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
   .btn-join-sm:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-join-sm.secondary { background: var(--white); color: var(--primary-dark); border: 1px solid var(--primary); }
+  .btn-join-sm.secondary:hover { background: var(--primary-light); }
   .team-members-section { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--gray-200); }
   .team-members-section h2 { font-size: 1.15rem; font-weight: 700; color: var(--gray-900); margin-bottom: 1.5rem; }
   .members-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -307,6 +318,7 @@
   .community-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
   .community-title { font-size: 0.92rem; font-weight: 700; color: var(--gray-900); }
   .community-sub { font-size: 0.75rem; color: var(--gray-600); }
+  .community-status { margin-top: 0.75rem; padding: 0.7rem 0.8rem; border-radius: 10px; background: var(--gray-50); border: 1px solid var(--gray-200); font-size: 0.76rem; color: var(--gray-700); line-height: 1.45; }
   .community-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
   .community-tag { font-size: 0.72rem; border-radius: 999px; padding: 0.25rem 0.55rem; background: var(--gray-100); color: var(--gray-700); }
   .community-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
@@ -428,7 +440,7 @@
         <button type="button" class="role-pill" onclick="setLoginRole('clubAdmin', this)"><i class="fas fa-building"></i> Club Admin</button>
       </div>
       <div class="role-hint" id="login-role-hint"><i class="fas fa-info-circle"></i> Student mode: use student account credentials.</div>
-      <div class="error-msg" id="login-error" role="alert" aria-live="assertive"><i class="fas fa-exclamation-circle"></i> Invalid credentials. Try admin / password</div>
+      <div class="error-msg" id="login-error" role="alert" aria-live="assertive"><i class="fas fa-exclamation-circle"></i> Invalid credentials. Sign in with your account.</div>
       <div class="field">
         <label>Email</label>
         <input type="email" id="login-user" placeholder="student@campus.edu" autocomplete="email" />
@@ -569,9 +581,9 @@
   <aside class="sidebar">
     <div class="sidebar-logo"><i class="fas fa-graduation-cap"></i> <span style="display:none;">Campus Connect</span></div>
     <div class="sidebar-user">
-      <div class="sidebar-avatar" id="sidebar-avatar">AJ</div>
-      <div class="user-name" id="sidebar-name">Alex Johnson</div>
-      <div class="user-email" id="sidebar-email">alex.johnson@student.edu</div>
+      <div class="sidebar-avatar" id="sidebar-avatar">CU</div>
+      <div class="user-name" id="sidebar-name">Campus User</div>
+      <div class="user-email" id="sidebar-email">student@campus.edu</div>
     </div>
     <nav>
       <div class="nav-item active" onclick="showPage('page-dashboard',this)">
@@ -742,11 +754,11 @@
       <div class="profile-layout">
         <div class="profile-left">
           <div class="profile-avatar-wrap">
-            <div class="profile-avatar" id="profile-avatar-main">AJ</div>
-            <div class="profile-name" id="profile-name-main">Alex Johnson</div>
+            <div class="profile-avatar" id="profile-avatar-main">CU</div>
+            <div class="profile-name" id="profile-name-main">Campus User</div>
             <div class="profile-sub" id="profile-program-main">B.S. Computer Science</div>
             <div class="profile-sub" id="profile-academic-main" style="margin-bottom:0.5rem;"><i class="fas fa-graduation-cap"></i> Year 3  •  GPA: 3.8</div>
-            <div class="profile-sub" id="profile-contact-main" style="margin-bottom:1.5rem;"><i class="fas fa-phone"></i> +91 9876543210 • <i class="fas fa-envelope"></i> alex.johnson@student.edu</div>
+            <div class="profile-sub" id="profile-contact-main" style="margin-bottom:1.5rem;"><i class="fas fa-phone"></i> +91 9876543210 • <i class="fas fa-envelope"></i> student@campus.edu</div>
             <button class="btn-edit" onclick="openEditModal()"><i class="fas fa-edit"></i> Edit Profile</button>
             <button class="btn-upload"><i class="fas fa-upload"></i> Upload Content</button>
           </div>
@@ -860,12 +872,16 @@
           <h2><i class="fas fa-plus-circle"></i> Create New Team</h2>
           <input type="text" class="team-input" placeholder="Team Name" id="team-name" />
           <textarea class="team-input" placeholder="Describe your team's goals and focus areas..." rows="3" id="team-desc" style="resize:vertical;font-family:inherit;"></textarea>
+          <input type="text" class="team-input" placeholder="Hackathon Name (e.g. AI Innovations)" id="team-hackathon" />
+          <input type="number" class="team-input" placeholder="Max Team Size" id="team-size-limit" min="2" max="10" value="4" />
+          <div class="team-form-hint"><i class="fas fa-users"></i> Students will see if your team still needs 1, 2, or more members and can directly request to join.</div>
           <div style="font-size:0.8rem;color:var(--gray-600);margin-bottom:1rem;"><i class="fas fa-info-circle"></i> Required skills (optional)</div>
-          <input type="text" class="team-input" placeholder="e.g. Python, React, Design" style="margin-bottom:1.5rem;" />
+          <input type="text" class="team-input" placeholder="e.g. Python, React, Design" style="margin-bottom:1.5rem;" id="team-skills" />
           <button class="btn-primary" style="border-radius:10px;" onclick="createTeam()"><i class="fas fa-rocket"></i> Create Team</button>
         </div>
         <div class="join-team-card">
           <h2><i class="fas fa-handshake"></i> Join Existing Teams</h2>
+          <div class="team-form-hint" style="color:var(--primary-dark);margin-top:-0.5rem;"><i class="fas fa-eye"></i> Visible teams show their hackathon, current strength, open slots, and pending join interest.</div>
           <div id="team-list" class="club-list"></div>
         </div>
       </div>
@@ -1197,7 +1213,7 @@
     <div class="edit-grid">
       <div class="field" style="background:var(--gray-50);">
         <label>Full Name</label>
-        <input type="text" id="edit-name" value="Alex Johnson" />
+        <input type="text" id="edit-name" value="Campus User" />
       </div>
       <div class="field" style="background:var(--gray-50);">
         <label>Profile Role</label>
@@ -1205,7 +1221,7 @@
       </div>
       <div class="field" style="background:var(--gray-50);">
         <label>Email</label>
-        <input type="email" id="edit-email" value="alex.johnson@student.edu" />
+        <input type="email" id="edit-email" value="student@campus.edu" />
       </div>
       <div class="field" style="background:var(--gray-50);">
         <label>Phone Number</label>
@@ -1267,10 +1283,10 @@
 <script>
   // ===== STATE =====
   let currentUser = {
-    username: 'alex.johnson',
-    name: 'Alex Johnson',
-    initials: 'AJ',
-    email: 'alex.johnson@student.edu',
+    username: 'student.demo',
+    name: 'Campus User',
+    initials: 'CU',
+    email: 'student@campus.edu',
     phone: '+91 9876543210',
     profileRole: 'Student',
     department: 'Computer Science',
@@ -1314,13 +1330,6 @@
       passwords: ['password', '123456'],
       role: 'clubAdmin',
       canManageClubs: true
-    },
-    'alex.johnson': {
-      name: 'Alex Johnson',
-      email: 'alex.johnson@student.edu',
-      passwords: ['password', '123456'],
-      role: 'student',
-      canManageClubs: false
     }
   };
 
@@ -1650,13 +1659,13 @@
 
     if (role === 'clubAdmin') {
       hint.innerHTML = '<i class="fas fa-shield-alt"></i> Club Admin mode: only authorized club admins can sign in.';
-      if (!userInput.value.trim() || userInput.value.trim().toLowerCase() === 'alex.johnson') {
+      if (!userInput.value.trim()) {
         userInput.value = 'club.admin';
       }
     } else {
       hint.innerHTML = '<i class="fas fa-info-circle"></i> Student mode: use student account credentials.';
       if (!userInput.value.trim() || userInput.value.trim().toLowerCase() === 'admin' || userInput.value.trim().toLowerCase() === 'club.admin') {
-        userInput.value = 'alex.johnson';
+        userInput.value = '';
       }
     }
     document.getElementById('login-error').style.display = 'none';
@@ -2048,10 +2057,10 @@
     document.getElementById('login-user').value = '';
     document.getElementById('login-pass').value = '';
     currentUser = {
-      username: 'alex.johnson',
-      name: 'Alex Johnson',
-      initials: 'AJ',
-      email: 'alex.johnson@student.edu',
+      username: 'student.demo',
+      name: 'Campus User',
+      initials: 'CU',
+      email: 'student@campus.edu',
       phone: '+91 9876543210',
       profileRole: 'Student',
       department: 'Computer Science',
@@ -2086,9 +2095,9 @@
   };
 
   const teamsDirectory = [
-    { name: 'Team Alpha', slug: 'team-alpha', focus: 'Full-Stack Development', members: 5, tags: ['React', 'Node', 'API'] },
-    { name: 'Innovators United', slug: 'innovators-united', focus: 'AI & ML Projects', members: 4, tags: ['Python', 'ML', 'NLP'] },
-    { name: 'Tech Pioneers', slug: 'tech-pioneers', focus: 'Blockchain Development', members: 6, tags: ['Solidity', 'Web3', 'Smart Contracts'] }
+    { name: 'Team Alpha', slug: 'team-alpha', focus: 'Full-Stack Development', members: 3, maxMembers: 5, hackathon: 'AI Innovations', lookingFor: 'Frontend + backend teammate', joinRequests: 2, tags: ['React', 'Node', 'API'] },
+    { name: 'Innovators United', slug: 'innovators-united', focus: 'AI & ML Projects', members: 4, maxMembers: 6, hackathon: 'HealthTech Challenge', lookingFor: 'ML engineer and data storyteller', joinRequests: 1, tags: ['Python', 'ML', 'NLP'] },
+    { name: 'Tech Pioneers', slug: 'tech-pioneers', focus: 'Blockchain Development', members: 6, maxMembers: 6, hackathon: 'Web3 Revolution', lookingFor: 'Team full', joinRequests: 0, tags: ['Solidity', 'Web3', 'Smart Contracts'] }
   ];
 
   const communityPeople = [
@@ -2217,6 +2226,86 @@
     window.prompt('Copy this team link:', link);
   }
 
+  function getTeamMaxMembers(team) {
+    return Math.max(Number(team.maxMembers || team.members || 1), Number(team.members || 1));
+  }
+
+  function getTeamOpenSlots(team) {
+    return Math.max(getTeamMaxMembers(team) - Number(team.members || 0), 0);
+  }
+
+  function getTeamDemandText(team) {
+    const openSlots = getTeamOpenSlots(team);
+    if (openSlots === 0) return 'Team full';
+    if (openSlots === 1) return 'Needs 1 more member';
+    return `Needs ${openSlots} more members`;
+  }
+
+  function getTeamSearchBlob(team) {
+    return `${team.name} ${team.focus} ${team.hackathon || ''} ${team.lookingFor || ''} ${(team.tags || []).join(' ')}`.toLowerCase();
+  }
+
+  function escapeSingleQuotes(value) {
+    return String(value || '').replace(/'/g, "\\'");
+  }
+
+  function renderTeamJoinList() {
+    const list = document.getElementById('team-list');
+    if (!list) return;
+
+    const visibleTeams = teamsDirectory.filter(team => getTeamOpenSlots(team) > 0);
+    if (!visibleTeams.length) {
+      list.innerHTML = '<div class="club-list-item"><h4><i class="fas fa-check-circle"></i> All visible teams are full</h4><div class="club-list-meta"><span>Create a new team or check again after teams open more slots.</span></div></div>';
+      return;
+    }
+
+    list.innerHTML = visibleTeams.map(team => {
+      const openSlots = getTeamOpenSlots(team);
+      const requestText = team.joinRequests ? `${team.joinRequests} pending request${team.joinRequests > 1 ? 's' : ''}` : 'No pending requests yet';
+      return `
+        <div class="join-team-item">
+          <div class="join-team-copy">
+            <div class="join-team-title-row">
+              <span>${team.name}</span>
+              <span class="team-slot-pill ${openSlots > 0 ? 'open' : 'full'}">${getTeamDemandText(team)}</span>
+            </div>
+            <div class="join-team-meta">${team.hackathon || 'Open hackathon'} • ${team.members}/${getTeamMaxMembers(team)} members • ${team.focus}</div>
+            <div class="join-team-note">${team.lookingFor || 'Open to new teammates'} • ${requestText}</div>
+          </div>
+          <div class="join-team-actions">
+            <button class="btn-join-sm" onclick="requestTeamJoin('${escapeSingleQuotes(team.slug)}')"><i class="fas fa-paper-plane"></i> Request Join</button>
+            <button class="btn-join-sm secondary" onclick="copyTeamLink('${escapeSingleQuotes(team.slug)}')"><i class="fas fa-link"></i> Copy Link</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function requestTeamJoin(slug) {
+    const team = teamsDirectory.find(t => t.slug === slug);
+    if (!team) {
+      showToast('Team not found');
+      return;
+    }
+
+    const openSlots = getTeamOpenSlots(team);
+    if (openSlots === 0) {
+      showToast(team.name + ' is already full');
+      return;
+    }
+
+    document.getElementById('modal-title').innerHTML = '<i class="fas fa-handshake"></i> Request to join ' + team.name + '?';
+    document.getElementById('modal-body').textContent = `${team.name} is participating in ${team.hackathon || 'an upcoming hackathon'} and currently needs ${openSlots} more member${openSlots > 1 ? 's' : ''}. Your request will be visible to the team captain.`;
+    document.getElementById('modal').classList.add('open');
+    modalCallback = () => {
+      team.joinRequests = Number(team.joinRequests || 0) + 1;
+      renderTeamJoinList();
+      renderCommunityFeed();
+      renderHackathons();
+      showToast('Join request sent to ' + team.name);
+    };
+  }
+
   function setCommunityTab(tab, el) {
     communityTab = tab;
     document.querySelectorAll('.community-tab').forEach(btn => btn.classList.remove('active'));
@@ -2260,21 +2349,26 @@
 
     if (communityTab !== 'people') {
       teamsDirectory.forEach(team => {
-        const blob = `${team.name} ${team.focus} ${(team.tags || []).join(' ')}`.toLowerCase();
+        const blob = getTeamSearchBlob(team);
         if (q && !blob.includes(q)) return;
+        const openSlots = getTeamOpenSlots(team);
         cards.push(`
           <div class="community-card">
             <div class="community-head">
               <div class="community-avatar"><i class="fas fa-users"></i></div>
               <div>
                 <div class="community-title">${team.name}</div>
-                <div class="community-sub">${team.members} members • ${team.focus}</div>
+                <div class="community-sub">${team.members}/${getTeamMaxMembers(team)} members • ${team.focus}</div>
               </div>
+            </div>
+            <div class="community-status">
+              <strong>${team.hackathon || 'Open Hackathon'}</strong><br />
+              ${getTeamDemandText(team)}${team.lookingFor ? ' • Looking for: ' + team.lookingFor : ''}
             </div>
             <div class="community-tags">${team.tags.map(tag => `<span class="community-tag">${tag}</span>`).join('')}</div>
             <div class="community-actions">
-              <button class="btn-link" onclick="openJoinModal('${team.name.replace(/'/g, "\\'")}')"><i class="fas fa-plus-circle"></i> Join Team</button>
-              <button class="btn-link" onclick="copyTeamLink('${team.slug}')"><i class="fas fa-link"></i> Copy URL</button>
+              <button class="btn-link" onclick="${openSlots > 0 ? `requestTeamJoin('${escapeSingleQuotes(team.slug)}')` : `showToast('${escapeSingleQuotes(team.name)} is full right now')`}"><i class="fas fa-plus-circle"></i> ${openSlots > 0 ? 'Request Join' : 'Team Full'}</button>
+              <button class="btn-link" onclick="copyTeamLink('${escapeSingleQuotes(team.slug)}')"><i class="fas fa-link"></i> Copy URL</button>
             </div>
           </div>
         `);
@@ -2365,6 +2459,10 @@
     }
 
     list.forEach(h => {
+      const matchingTeams = teamsDirectory.filter(team => (team.hackathon || '').toLowerCase() === h.title.toLowerCase() && getTeamOpenSlots(team) > 0);
+      const openTeamSummary = matchingTeams.length
+        ? `<p style="margin-top:0.65rem;color:var(--success);font-weight:600;"><i class="fas fa-user-plus"></i> ${matchingTeams.map(team => `${team.name} needs ${getTeamOpenSlots(team)}`).join(' • ')}</p>`
+        : '';
       const card = document.createElement('div');
       card.className = 'hack-card ' + (h.theme === 'gray' ? 'gray' : 'purple');
       card.dataset.skills = (h.skillsKey || '').toLowerCase();
@@ -2374,6 +2472,7 @@
         <p><strong>Team Size:</strong> ${h.teamSize}</p>
         <p><strong>Hosted By:</strong> ${h.organizer}</p>
         <p style="color:var(--gray-600);margin-top:0.5rem;"><i class="fas fa-calendar"></i> Starts: ${h.startDate}${h.prize ? ' • ' + h.prize : ''}</p>
+        ${openTeamSummary}
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
           <button class="btn-join" onclick="openJoinModal('${h.title.replace(/'/g, "\\'")}')"><i class="fas fa-plus-circle"></i> Join Hackathon</button>
         </div>
@@ -2620,23 +2719,38 @@
 
   function createTeam() {
     const name = document.getElementById('team-name').value.trim();
+    const description = document.getElementById('team-desc').value.trim();
+    const hackathon = document.getElementById('team-hackathon').value.trim();
+    const maxMembers = Number(document.getElementById('team-size-limit').value || 4);
+    const skills = document.getElementById('team-skills').value.trim();
     if (!name) { showToast('Please enter a team name'); return; }
+    if (!hackathon) { showToast('Please enter a hackathon name'); return; }
+    if (!maxMembers || maxMembers < 2) { showToast('Max team size should be at least 2'); return; }
 
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     if (!teamsDirectory.some(team => team.slug === slug)) {
       teamsDirectory.push({
         name,
         slug,
-        focus: 'Newly created team',
+        focus: description || 'Newly created team',
         members: 1,
-        tags: ['New Team']
+        maxMembers,
+        hackathon,
+        lookingFor: skills || 'Open to multidisciplinary teammates',
+        joinRequests: 0,
+        tags: skills ? skills.split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 5) : ['New Team']
       });
     }
 
     document.getElementById('team-name').value = '';
     document.getElementById('team-desc').value = '';
+    document.getElementById('team-hackathon').value = '';
+    document.getElementById('team-size-limit').value = '4';
+    document.getElementById('team-skills').value = '';
+    renderTeamJoinList();
     renderCommunityFeed();
-    showToast('Team "' + name + '" created. Share URL copied from Team or Community pages.');
+    renderHackathons();
+    showToast('Team "' + name + '" created. Students can now see open slots and request to join.');
   }
 
   function savePrefs() { showToast('Your preferences have been saved!'); }
@@ -2691,6 +2805,7 @@
     updateAccessUI();
     renderHackathons();
     renderClubHackathonList();
+    renderTeamJoinList();
     renderCommunityFeed();
     navigateFromSharedTeamUrl();
     window.addEventListener('hashchange', navigateFromSharedTeamUrl);

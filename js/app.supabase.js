@@ -260,6 +260,47 @@ function getTeamMembershipCount(team) {
   return Array.isArray(team?.team_members) ? team.team_members.length : 0;
 }
 
+function getTeamMetadata(team) {
+  const tags = Array.isArray(team?.tags) ? team.tags.filter(Boolean) : [];
+  const hackathonTag = tags.find((tag) => String(tag).toLowerCase().startsWith('hackathon:'));
+  const maxMembersTag = tags.find((tag) => String(tag).toLowerCase().startsWith('max:'));
+  const skillTags = tags.filter((tag) => {
+    const lower = String(tag).toLowerCase();
+    return !lower.startsWith('hackathon:') && !lower.startsWith('max:');
+  });
+
+  const hackathon = hackathonTag ? hackathonTag.slice(hackathonTag.indexOf(':') + 1).trim() : '';
+  const parsedMax = maxMembersTag ? Number(maxMembersTag.slice(maxMembersTag.indexOf(':') + 1).trim()) : NaN;
+  const maxMembers = Number.isFinite(parsedMax) && parsedMax > 0 ? parsedMax : 4;
+  const memberCount = getTeamMembershipCount(team);
+  const openSlots = Math.max(maxMembers - memberCount, 0);
+
+  return {
+    hackathon,
+    maxMembers,
+    memberCount,
+    openSlots,
+    skillTags
+  };
+}
+
+function getOpenTeamLabel(team) {
+  const meta = getTeamMetadata(team);
+  if (meta.openSlots <= 0) return 'Team full';
+  if (meta.openSlots === 1) return 'Needs 1 more member';
+  return `Needs ${meta.openSlots} more members`;
+}
+
+function getRecruitingTeamsForHackathon(hackathon) {
+  const title = String(hackathon?.title || '').toLowerCase().trim();
+  return state.teams.filter((team) => {
+    const meta = getTeamMetadata(team);
+    if (meta.openSlots <= 0) return false;
+    if (!meta.hackathon) return true;
+    return meta.hackathon.toLowerCase() === title;
+  });
+}
+
 function renderJoinedItemHtml(title, subtitle, actionHtml = '') {
   return `
     <div class="club-list-item">
@@ -360,11 +401,16 @@ function renderTeams() {
 
   list.innerHTML = state.teams.map((team) => {
     const joined = joinedSet.has(team.id);
-    const memberCount = getTeamMembershipCount(team);
+    const meta = getTeamMetadata(team);
     return `
       <div class="club-list-item">
         <h4>${escapeHtml(team.name)}</h4>
-        <div class="club-list-meta"><span>${escapeHtml(team.description)}</span><span>${memberCount} members</span></div>
+        <div class="club-list-meta">
+          <span>${escapeHtml(team.description)}</span>
+          <span>${meta.memberCount}/${meta.maxMembers} members</span>
+          <span>${escapeHtml(getOpenTeamLabel(team))}</span>
+          ${meta.hackathon ? `<span><i class="fas fa-flag-checkered"></i> ${escapeHtml(meta.hackathon)}</span>` : ''}
+        </div>
         <div style="margin-top:0.7rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
           <button class="btn-link" onclick="window.joinTeamMembership(${team.id})"><i class="fas ${joined ? 'fa-check-circle' : 'fa-plus-circle'}"></i> ${joined ? 'Already joined' : 'Join'}</button>
           ${joined ? `<button class="btn-link" onclick="window.leaveTeamMembership(${team.id})"><i class="fas fa-times-circle"></i> Unenroll</button>` : ''}
@@ -450,11 +496,36 @@ function renderHackathons(list = state.hackathons) {
   grid.innerHTML = list
     .map((item) => {
       const isRegistered = registeredHackathons.has(item.id);
+      const recruitingTeams = getRecruitingTeamsForHackathon(item).slice(0, 2);
+      const recruitingHtml = recruitingTeams.length
+        ? `
+          <div style="margin:0.8rem 0;padding:0.75rem;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.18);">
+            <div style="font-size:0.82rem;font-weight:700;color:#047857;margin-bottom:0.4rem;"><i class="fas fa-user-plus"></i> Teams recruiting for this hackathon</div>
+            ${recruitingTeams.map((team) => {
+              const teamMeta = getTeamMetadata(team);
+              const joinedTeam = getMyTeamIdSet().has(team.id);
+              return `
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-top:0.45rem;">
+                  <div style="font-size:0.78rem;color:var(--gray-700);">
+                    <strong>${escapeHtml(team.name)}</strong> • ${teamMeta.memberCount}/${teamMeta.maxMembers} members • ${escapeHtml(getOpenTeamLabel(team))}
+                  </div>
+                  <button class="btn-link" onclick="window.joinTeamMembership(${team.id})"><i class="fas ${joinedTeam ? 'fa-check-circle' : 'fa-plus-circle'}"></i> ${joinedTeam ? 'Already joined' : 'Join Team'}</button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `
+        : `
+          <div style="margin:0.8rem 0;padding:0.75rem;border-radius:10px;background:var(--gray-50);border:1px solid var(--gray-200);font-size:0.78rem;color:var(--gray-600);">
+            <i class="fas fa-users"></i> No recruiting teams tagged for this hackathon yet. Create one from the Team page.
+          </div>
+        `;
       return `
         <div class="hack-card purple">
           <h3><i class="fas fa-flag-checkered"></i> ${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description)}</p>
           <p><strong>Date:</strong> ${escapeHtml(item.date)}</p>
+          ${recruitingHtml}
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
             <button class="btn-join" onclick="window.joinHackathonRegistration(${item.id})">
               <i class="fas ${isRegistered ? 'fa-check-circle' : 'fa-plus-circle'}"></i> ${isRegistered ? 'Already joined' : 'Register'}
@@ -738,6 +809,9 @@ function wireSupabaseAuthFlow() {
     } catch (error) {
       setError(error.message);
       setInlineErrorText('signup-email-error', error.message || 'Signup failed');
+      if (String(error.message || '').toLowerCase().includes('already registered')) {
+        setSignupBanner('This email already has an account. Use Sign In instead, or try a different email for a new account.');
+      }
       showToast(error.message || 'Signup failed');
     } finally {
       setLoading('signup-submit', false, 'Creating Account...');
@@ -862,22 +936,43 @@ function wireSupabaseAuthFlow() {
     if (!state.user) return;
     const name = (document.getElementById('team-name')?.value || '').trim();
     const description = (document.getElementById('team-desc')?.value || '').trim();
+    const hackathon = (document.getElementById('team-hackathon')?.value || '').trim();
+    const maxMembers = Number((document.getElementById('team-size-limit')?.value || '4').trim());
+    const skills = (document.getElementById('team-skills')?.value || '').trim();
     if (!name || !description) {
       showToast('Please enter a team name and description');
       return;
     }
 
+    const tags = [];
+    if (hackathon) tags.push(`hackathon:${hackathon}`);
+    if (Number.isFinite(maxMembers) && maxMembers > 0) tags.push(`max:${maxMembers}`);
+    if (skills) {
+      skills
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+        .slice(0, 6)
+        .forEach((tag) => tags.push(tag));
+    }
+
     await createTeamRecord({
       name,
       description,
-      tags: [],
+      tags,
       created_by: state.user.id
     });
 
     const teamNameInput = document.getElementById('team-name');
     const teamDescInput = document.getElementById('team-desc');
+    const teamHackathonInput = document.getElementById('team-hackathon');
+    const teamSizeInput = document.getElementById('team-size-limit');
+    const teamSkillsInput = document.getElementById('team-skills');
     if (teamNameInput) teamNameInput.value = '';
     if (teamDescInput) teamDescInput.value = '';
+    if (teamHackathonInput) teamHackathonInput.value = '';
+    if (teamSizeInput) teamSizeInput.value = '4';
+    if (teamSkillsInput) teamSkillsInput.value = '';
 
     await refreshData();
     showToast('Team created successfully.');
